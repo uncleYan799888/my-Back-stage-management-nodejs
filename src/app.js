@@ -2,9 +2,7 @@ const express = require('express');
 const app = express();
 //跨域模块
 const cors = require('cors')
-const todoList = require('../data/todoList.json')
 const url = require('url')
-const querystring = require('querystring')
 const restaurantRouter = require('./restaurant.router')
 const mysql = require('mysql')
 const bodyParser = require('body-parser')
@@ -70,10 +68,16 @@ app.use(cors())
 app.use(restaurantRouter)
 
 
-app.get('/todoList',function(req,res){
+app.get('/todoList',async (req,res,next)=>{
     //数据
+    try {
+        let result = await sqlQuery('SELECT * FROM todolist')
     // res.writeHead(200, { "Content-Type": "application/json" });
-    res.send(todoList)
+    res.send(result)
+    } catch (error) {
+        next(error)
+    }
+    
     })
 app.post('/login',function(req,res){
     //数据
