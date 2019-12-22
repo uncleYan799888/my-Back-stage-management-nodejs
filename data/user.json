@@ -1,0 +1,28 @@
+{
+    "data": [{
+        "account": "sunzeyan",
+        "password": "sunzeyan",
+        "token": 1,
+        "roles": ["admin", "Tourist"]
+    },{
+        "account": "zhangxueyou",
+        "password": "zhangxueyou",
+        "token": 1
+    },{
+        "account": "liudehua",
+        "password": "liudehua",
+        "token": 1
+    },{
+        "account": "wuyanzu",
+        "password": "wuyanzu",
+        "token": 1
+    },{
+        "account": "chenguanxi",
+        "password": "chenguanxi",
+        "token": 1
+    },{
+        "account": "admin",
+        "password": "admin",
+        "token": 2
+    }]
+}
