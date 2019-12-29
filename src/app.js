@@ -73,18 +73,54 @@ app.get('/todoList',async (req,res,next)=>{
     try {
         let result = await sqlQuery('SELECT * FROM todolist')
     // res.writeHead(200, { "Content-Type": "application/json" });
-    res.send(result)
+        let notDone = [], AlreadyDone = [], notPass = []
+        for (let i = 0; i < result.length; i++){
+            if (result[i].type === '1') {
+                notDone.push(result[i])
+            } else if (result[i].type === '2') {
+                notPass.push(result[i])
+            } else {
+                AlreadyDone.push(result[i])
+            }
+        }
+        // console.log(result)
+    res.send({notDone:notDone,AlreadyDone:AlreadyDone,notPass:notPass})
+    } catch (error) {
+        next(error)
+    }
+})
+app.get('/todoListADMIN',async (req,res,next)=>{
+    //数据
+    try {
+        let result = await sqlQuery('SELECT * FROM todolistADMIN')
+    // res.writeHead(200, { "Content-Type": "application/json" });
+        let notDone = [], AlreadyDone = [], notPass = []
+        for (let i = 0; i < result.length; i++){
+            if (result[i].type === '1') {
+                notDone.push(result[i])
+            } else if (result[i].type === '2') {
+                notPass.push(result[i])
+            } else {
+                AlreadyDone.push(result[i])
+            }
+        }
+        // console.log(result)
+    res.send({notDone:notDone,AlreadyDone:AlreadyDone,notPass:notPass})
     } catch (error) {
         next(error)
     }
     
-    })
+})
+app.post('/todoReject', (req, res) => {
+    console.log(req.body)
+        res.send({statu: 1, msg: '成功'})
+})
 app.post('/login',function(req,res){
     //数据
     // let a,p
     // let {query} = url.parse(req.url, true)
     let { account, password } = req.body
-    // console.log('account', req.body)
+    console.log('account', req.body)
     async function addToken(values) {
         addResults = await sqlQuery('UPDATE userinfo SET token = ? WHERE account = ?', values)
         // console.log('addrusults', addResults, '传入参数', values)
