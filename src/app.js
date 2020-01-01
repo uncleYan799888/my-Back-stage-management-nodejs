@@ -94,26 +94,73 @@ app.get('/todoListADMIN',async (req,res,next)=>{
     try {
         let result = await sqlQuery('SELECT * FROM todolistADMIN')
     // res.writeHead(200, { "Content-Type": "application/json" });
-        let notDone = [], AlreadyDone = [], notPass = []
+        let notDone = [], pass = [], notPass = []
         for (let i = 0; i < result.length; i++){
-            if (result[i].type === '1') {
+            if (result[i].type === 'a') {
                 notDone.push(result[i])
-            } else if (result[i].type === '2') {
+            } else if (result[i].type === 'b') {
                 notPass.push(result[i])
             } else {
-                AlreadyDone.push(result[i])
+                pass.push(result[i])
             }
         }
         // console.log(result)
-    res.send({notDone:notDone,AlreadyDone:AlreadyDone,notPass:notPass})
+    res.send({notDone:notDone,pass:pass,notPass:notPass})
     } catch (error) {
         next(error)
     }
     
 })
-app.post('/todoReject', (req, res) => {
-    console.log(req.body)
-        res.send({statu: 1, msg: '成功'})
+app.post('/todoReject', async (req, res,next) => {
+    try {
+        if (req.body.method === 'r') {
+            let values = ['b',req.body.reason, req.body.eid]
+            console.log('values',values)
+            let result = await sqlQuery(`UPDATE todolistadmin SET type = ?, reason = ? WHERE eid = ?`, values)
+            console.log(req.body, 'result', result)
+            if (result) {
+                res.send({statu: 1, msg: result})
+        }
+        } else if (req.body.method === 'p') {
+            let values = ['c', req.body.eid]
+            let result = await sqlQuery('UPDATE todolistadmin SET type = ? WHERE eid = ?', values)
+            if (result) {
+                res.send({statu:1,msg: result})
+            }
+        }
+    } catch (error) {
+        next(error)
+    }
+})
+app.post('/todoAdd', async (req, res, next) => {
+    try {
+        console.log(req.body)
+        let name = await sqlQuery(`SELECT name,account from userinfo where uid = ${req.body.uid}`)
+        console.log('name', name)
+        //获取当前日期
+        let date = new Date()
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let strDate = date.getDate()
+        if(month >=1 && month <= 9){
+            month = '0' + month
+        }
+        if(strDate >=1 && strDate<=9){
+            strDate = '0' + strDate
+        }
+        let event_time = year + '-' + month + '-' + strDate
+        let obj = {
+            personnel_account: name[0].account,
+            personnel_name: name[0].name,
+            event_detailed: req.body.event_detailed,
+            event_time: event_time,
+            type: 1
+        }
+        let result = await sqlQuery('INSERT INTO todolist SET ?', obj)
+        res.send({statu:1,msg:result})
+    } catch (error) {
+        next(error)
+    }
 })
 app.post('/login',function(req,res){
     //数据

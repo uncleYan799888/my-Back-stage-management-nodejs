@@ -84,23 +84,6 @@ router.post('/addRestaurant', async (req, res, next) => {
             opentime: '周一至周日 ' + req.body.startTime + '-' + req.body.endTime,
             evaluate: req.body.evaluate
         }
-        // values.opentime = '周一至周日 ' + req.body.startTime + '-' + req.body.endTime
-        // values.evaluate = req.body.evaluate.toFixed(1)
-        // values.consumption = '人均：'+ req.body.consumption
-        // let opentime = '周一至周日 '
-        // for (let a in req.body) {
-        //     // arr.push(a)
-        //     if (a === 'startTime') {
-        //         opentime += req.body[a]
-        //     } else if (a === 'endTime') {
-        //         opentime = opentime + '-' + req.body[a]
-        //     } else if (a === 'evaluate') {
-        //         values[a] = req.body[a].toFixed(1)
-        //     } else {
-        //         values[a] = req.body[a]
-        //     }
-        // }
-        // console.log('arr', arr)
         console.log('values', values)
         let result = await sqlQuery('INSERT INTO restaurant_list set ?', values)
         console.log(result)
