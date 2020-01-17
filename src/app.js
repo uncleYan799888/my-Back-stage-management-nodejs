@@ -105,20 +105,73 @@ app.get('/getUserInfo', (req, res) => {
     let {query} = url.parse(req.url, true)
     // console.log('获取token', query.token)
     let data
-    // for (let a = 0; a < userInfo.length; a++) {
-    //     // console.log('进入循环')
-    //     if (userInfo[a].token === query.token) {
-    //         data = userInfo[a].info
-    //         // console.log('获取信息', userInfo[a].info)
-    //     }
-    // }
     async function searchUserInfo(values) {
         data = await sqlQuery('SELECT * FROM userinfo WHERE token = ?', values)
         // console.log('data', data)
         // console.log('type data', typeof data)
-        res.send({statu: 1, msg: '成功', data: data})
+        let menu = [
+            {
+            icon: 'el-icon-s-home',
+            index: '/baseHome',
+            title: '首页',
+            role: 'ADMIN',
+            name: 'baseHome',
+            children:[]
+            },
+            {
+            icon: 'el-icon-s-home',
+            index: 'todolistADMIN',
+            title: '待办admin',
+            role: 'ADMIN',
+                name: 'todoListADMIN',
+                children:[]
+          },{
+            icon: 'el-icon-document',
+            index: '1',
+            title: '深圳餐馆整理',
+            role: 'ADMIN',
+            children: [
+                {
+                    index: '/RestaurantList',
+                    title: '餐馆列表',
+                    role: 'ADMIN',
+                    name: 'RestaurantList'
+                },{
+                    index: '/addRestaurant',
+                    title: '添加餐馆',
+                    role: 'ADMIN',
+                    name: 'addRestaurant'
+                },{
+                    index: '/StarRestaurant',
+                    title: '明星餐馆',
+                    role: 'ADMIN',
+                    name: 'StarRestaurant'
+                }]
+          },{
+            icon: 'el-icon-user',
+            index: 'personalInfo',
+            title: '个人信息',
+            role: 'ADMIN',
+                name: 'personalInfo',
+                children:[]
+          },{
+            icon: 'el-icon-picture-outline-round',
+            index: '/Internationalization',
+            title: '国际化',
+            role: 'ADMIN',
+                name: 'Internationalization',
+                children:[]
+          }]
+        res.send({statu: 1, msg: '成功', data: data,menu:menu})
     }
     searchUserInfo([query.token])
+})
+app.get('/getRouter', async (req, res, next) => {
+    try {
+        res.send({statu:1,msg:'成功'})
+    } catch (err) {
+        next(err)
+    }
 })
 app.post('/sendAvatar', (req, res) => {
     res.send({statu: 1, msg: '上传成功'})
