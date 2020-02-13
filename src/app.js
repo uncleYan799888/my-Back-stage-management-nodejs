@@ -103,66 +103,136 @@ app.post('/login',function(req,res){
 })
 app.get('/getUserInfo', (req, res) => {
     let {query} = url.parse(req.url, true)
-    // console.log('获取token', query.token)
+    console.log('获取token', query.token)
     let data
     async function searchUserInfo(values) {
         data = await sqlQuery('SELECT * FROM userinfo WHERE token = ?', values)
-        // console.log('data', data)
-        // console.log('type data', typeof data)
-        let menu = [
-            {
-            icon: 'el-icon-s-home',
-            index: '/baseHome',
-            title: '首页',
-            role: 'ADMIN',
-            name: 'baseHome',
-            children:[]
-            },
-            {
-            icon: 'el-icon-s-home',
-            index: 'todolistADMIN',
-            title: '待办admin',
-            role: 'ADMIN',
-                name: 'todoListADMIN',
-                children:[]
-          },{
-            icon: 'el-icon-document',
-            index: '1',
-            title: '深圳餐馆整理',
-            role: 'ADMIN',
-            children: [
+        console.log('data', data[0].roles)
+        let role = data[0].roles
+        console.log('type data', typeof data)
+        let menus = {
+            ADMIN:[
                 {
-                    index: '/RestaurantList',
-                    title: '餐馆列表',
-                    role: 'ADMIN',
-                    name: 'RestaurantList'
-                },{
-                    index: '/addRestaurant',
-                    title: '添加餐馆',
-                    role: 'ADMIN',
-                    name: 'addRestaurant'
-                },{
-                    index: '/StarRestaurant',
-                    title: '明星餐馆',
-                    role: 'ADMIN',
-                    name: 'StarRestaurant'
+                icon: 'el-icon-s-home',
+                index: '/baseHome',
+                title: '首页',
+                role: 'ADMIN',
+                name: 'baseHome',
+                children:[]
+                },
+                {
+                icon: 'el-icon-s-home',
+                index: 'todolistADMIN',
+                title: '待办admin',
+                role: 'ADMIN',
+                    name: 'todoListADMIN',
+                    children:[]
+              },{
+                icon: 'el-icon-document',
+                index: '1',
+                title: '深圳餐馆整理',
+                role: 'ADMIN',
+                children: [
+                    {
+                        index: '/RestaurantList',
+                        title: '餐馆列表',
+                        role: 'ADMIN',
+                        name: 'RestaurantList'
+                    },{
+                        index: '/addRestaurant',
+                        title: '添加餐馆',
+                        role: 'ADMIN',
+                        name: 'addRestaurant'
+                    },{
+                        index: '/StarRestaurant',
+                        title: '明星餐馆',
+                        role: 'ADMIN',
+                        name: 'StarRestaurant'
+                    }]
+              },{
+                icon: 'el-icon-user',
+                index: 'personalInfo',
+                title: '个人信息',
+                role: 'ADMIN',
+                    name: 'personalInfo',
+                    children:[]
+              },{
+                icon: 'el-icon-picture-outline-round',
+                index: '/Internationalization',
+                title: '国际化',
+                role: 'ADMIN',
+                    name: 'Internationalization',
+                    children:[]
+              },{
+                icon: 'el-icon-picture-outline-round',
+                index: '/changePassword',
+                title: '修改密码',
+                role: 'ADMIN',
+                    name: 'changePassword',
+                    children:[]
+                }],
+            TOURIST:[
+                {
+                icon: 'el-icon-s-home',
+                index: '/baseHome',
+                title: '首页',
+                role: 'TOURIST',
+                name: 'baseHome',
+                children:[]
+                },
+                {
+                icon: 'el-icon-s-home',
+                index: 'todolist',
+                title: '待办',
+                role: 'TOURIST',
+                    name: 'todoList',
+                    children:[]
+              },{
+                icon: 'el-icon-document',
+                index: '1',
+                title: '深圳餐馆整理',
+                role: 'TOURIST',
+                children: [
+                    {
+                        index: '/RestaurantList',
+                        title: '餐馆列表',
+                        role: 'TOURIST',
+                        name: 'RestaurantList'
+                    },{
+                        index: '/addRestaurant',
+                        title: '添加餐馆',
+                        role: 'TOURIST',
+                        name: 'addRestaurant'
+                    },{
+                        index: '/StarRestaurant',
+                        title: '明星餐馆',
+                        role: 'TOURIST',
+                        name: 'StarRestaurant'
+                    }]
+              },{
+                icon: 'el-icon-user',
+                index: 'personalInfo',
+                title: '个人信息',
+                role: 'TOURIST',
+                    name: 'personalInfo',
+                    children:[]
+              },{
+                icon: 'el-icon-picture-outline-round',
+                index: '/Internationalization',
+                title: '国际化',
+                role: 'TOURIST',
+                    name: 'Internationalization',
+                    children:[]
+              },{
+                icon: 'el-icon-picture-outline-round',
+                index: '/changePassword',
+                title: '修改密码',
+                role: 'TOURIST',
+                    name: 'changePassword',
+                    children:[]
                 }]
-          },{
-            icon: 'el-icon-user',
-            index: 'personalInfo',
-            title: '个人信息',
-            role: 'ADMIN',
-                name: 'personalInfo',
-                children:[]
-          },{
-            icon: 'el-icon-picture-outline-round',
-            index: '/Internationalization',
-            title: '国际化',
-            role: 'ADMIN',
-                name: 'Internationalization',
-                children:[]
-          }]
-        res.send({statu: 1, msg: '成功', data: data,menu:menu})
+        }
+        res.send({statu: 1, msg: '成功', data: data,menu:menus[role]})
     }
     searchUserInfo([query.token])
 })

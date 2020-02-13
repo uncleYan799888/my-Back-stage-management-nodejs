@@ -76,7 +76,7 @@ router.get('/todoListADMIN',async (req,res,next)=>{
   try {
       let result = await sqlQuery('SELECT * FROM todolist')
   // res.writeHead(200, { "Content-Type": "application/json" });
-      let notDone = [], pass = [], notPass = []
+      let notDone = [], pass = [], notPass = [],ExecutorTodo= []
       for (let i = 0; i < result.length; i++){
           if (result[i].type === 'b') {
               notDone.push(result[i])
@@ -84,10 +84,12 @@ router.get('/todoListADMIN',async (req,res,next)=>{
               notPass.push(result[i])
           } else if(result[i].type === 'd') {
               pass.push(result[i])
+          } else if (result[i].type === 'a') {
+            ExecutorTodo.push(result[i])
           }
       }
       // console.log(result)
-  res.send({notDone:notDone,pass:pass,notPass:notPass})
+  res.send({notDone:notDone,pass:pass,notPass:notPass,ExecutorTodo:ExecutorTodo})
   } catch (error) {
       next(error)
   }
@@ -96,27 +98,40 @@ router.get('/todoListADMIN',async (req,res,next)=>{
 //管理员驳回
 router.post('/todoReject', async (req, res, next) => {
   //管理员表改变，执行者表也改变
-  try {
-      if (req.body.method === 'r') {
-          let values = ['c',req.body.reason, req.body.eid]
-          console.log('values',values)
+    try {
+        if (req.body.method === 'r') {
+          //reject
+        let values = ['c',req.body.reason, req.body.eid]
+        console.log('values',values)
         //   let todolistadmin = await sqlQuery(`UPDATE todolistadmin SET type = ?, reason = ? WHERE eid = ?`, values)
-          let todolist = await sqlQuery(`UPDATE todolist SET type = ?, reason = ? WHERE eid = ?`, values)
+        let todolist = await sqlQuery(`UPDATE todolist SET type = ?, reason = ? WHERE eid = ?`, values)
         //   console.log(req.body, 'result', result)
-          if (todolist) {
-              res.send({statu: 1, msg: '操作成功'})
-      }
-      } else if (req.body.method === 'p') {
-          let values = ['d', req.body.eid]
+        if (todolist) {
+            res.send({statu: 1, msg: '操作成功'})
+        }
+    } else if (req.body.method === 'p') {
+          //pass
+            let date = new Date()
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let strDate = date.getDate()
+        if(month >=1 && month <= 9){
+            month = '0' + month
+        }
+        if(strDate >=1 && strDate<=9){
+            strDate = '0' + strDate
+        }
+            let event_time = year + '-' + month + '-' + strDate
+            let values = ['d', event_time,req.body.eid]
         //   let updataADMIN = await sqlQuery('UPDATE todolistadmin SET type = ? WHERE eid = ?', values)
-          let updata = await sqlQuery('UPDATE todolist SET type = ? WHERE eid = ?', values)
-          if (updata) {
-              res.send({statu:1,msg: '操作成功'})
-          }
-      }
-  } catch (error) {
-      next(error)
-  }
+        let updata = await sqlQuery('UPDATE todolist SET type = ?, end_time = ? WHERE eid = ?', values)
+        if (updata) {
+            res.send({statu:1,msg: '操作成功'})
+        }
+    }
+} catch (error) {
+    next(error)
+}
 })
 //管理员添加事项给执行者
 router.post('/todoAdd', async (req, res, next) => {
