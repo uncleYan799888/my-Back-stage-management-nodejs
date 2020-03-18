@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 //跨域模块
+const path = require('path')
 const cors = require('cors')
 const url = require('url')
 const restaurantRouter = require('./restaurant.router')
@@ -8,6 +9,7 @@ const todoRouter = require('./todo.router')
 const mysql = require('mysql')
 const bodyParser = require('body-parser')
 // 使用 createPool 建立连接池
+// const port = process.env.PORT || 3000
 const pool = mysql.createPool({
     host: '127.0.0.1',
     user: 'root',
@@ -121,7 +123,7 @@ app.get('/getUserInfo', (req, res) => {
                 children:[]
                 },
                 {
-                icon: 'el-icon-s-home',
+                icon: 'el-icon-s-order',
                 index: 'todolistADMIN',
                 title: '待办admin',
                 role: 'ADMIN',
@@ -150,6 +152,13 @@ app.get('/getUserInfo', (req, res) => {
                         name: 'StarRestaurant'
                     }]
               },{
+                icon: 'el-icon-mouse',
+                index: 'awednd',
+                title: '拖拽组件',
+                role: 'ADMIN',
+                    name: 'awednd',
+                    children:[]
+              },{
                 icon: 'el-icon-user',
                 index: 'personalInfo',
                 title: '个人信息',
@@ -170,7 +179,14 @@ app.get('/getUserInfo', (req, res) => {
                 role: 'ADMIN',
                     name: 'changePassword',
                     children:[]
-                }],
+                },{
+                    icon: 'el-icon-tickets',
+                    index: '/README',
+                    title: 'README',
+                    role: 'ADMIN',
+                        name: 'README',
+                        children:[]
+                    }],
             TOURIST:[
                 {
                 icon: 'el-icon-s-home',
@@ -181,7 +197,7 @@ app.get('/getUserInfo', (req, res) => {
                 children:[]
                 },
                 {
-                icon: 'el-icon-s-home',
+                icon: 'el-icon-s-order',
                 index: 'todolist',
                 title: '待办',
                 role: 'TOURIST',
@@ -210,6 +226,13 @@ app.get('/getUserInfo', (req, res) => {
                         name: 'StarRestaurant'
                     }]
               },{
+                icon: 'el-icon-mouse',
+                index: 'awednd',
+                title: '拖拽组件',
+                role: 'TOURIST',
+                    name: 'awednd',
+                    children:[]
+              },{
                 icon: 'el-icon-user',
                 index: 'personalInfo',
                 title: '个人信息',
@@ -230,7 +253,14 @@ app.get('/getUserInfo', (req, res) => {
                 role: 'TOURIST',
                     name: 'changePassword',
                     children:[]
-                }]
+                },{
+                    icon: 'el-icon-tickets',
+                    index: '/README',
+                    title: 'README',
+                    role: 'ADMTOURISTIN',
+                        name: 'README',
+                        children:[]
+                    }]
         }
         res.send({statu: 1, msg: '成功', data: data,menu:menus[role]})
     }
@@ -248,8 +278,9 @@ app.post('/sendAvatar', (req, res) => {
 })
 
 app.use(error_handle_middleware)
-
+//部署上线时读取静态文件
+// app.use(express.static(path.join(__dirname, '../dist')));
 
 var server = app.listen(3000,function(){
-    console.log('runing 3000...');
+    console.log('running' + '3000');
 })
